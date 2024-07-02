@@ -1,4 +1,4 @@
-import { Helper } from "./Helper";
+import { utils } from "./utils";
 
 export class DNSBuffer {
     buffer: Buffer;
@@ -25,7 +25,7 @@ export class DNSBuffer {
         }
         let bytesRead = this.buffer.slice(this.offset, this.offset + length)
         let hexString = bytesRead.toString('hex')
-        let bytesToReturn = Helper.convertHexToBinary(hexString)
+        let bytesToReturn = utils.convertHexToBinary(hexString)
         return bytesToReturn
     }
 
@@ -78,7 +78,7 @@ export class DNSBuffer {
         }
         let bytesRead = this.buffer.slice(this.offset, this.offset + length)
         let hexString = bytesRead.toString('hex')
-        let bytesToReturn = Helper.convertHexToBinary(hexString)
+        let bytesToReturn = utils.convertHexToBinary(hexString)
         this.offset += 2
         return bytesToReturn
     }

@@ -84,6 +84,9 @@ export class DNSHeader{
         return flags
     }
 
+    getID():number{
+        return this.id
+    }
     getQDCOUNT(): number{
         return this.QDCOUNT;
     }

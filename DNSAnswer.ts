@@ -1,5 +1,6 @@
 import { DNSBuffer } from "./DNSBuffer";
-import { Helper } from "./Helper";
+import { DNSPacket } from "./DNSPacket";
+import { utils } from "./utils";
 
 interface Answer{
     Domain_Name: string;
@@ -12,30 +13,58 @@ interface Answer{
 
 
 export class DNSAnswer{
+private constructor(
+    private readonly name:string,
+    private readonly qType:string,
+    private readonly qClass:string,
+    private readonly TTL:number,
+    private readonly LEN:number,
+    private readonly IP:string,
+){}
 
-    static AnswerDecode(buffer: DNSBuffer):Answer[] {
-        let answers: Answer[] = [] 
-        while(true)
-        {
-            let Domain_Name = this.getDomainName(buffer)
-            let QTYPE = Helper.getQTYPE(buffer.readUInt(2))
-            let QCLASS = Helper.getQCLASS(buffer.readUInt(2))
-            let TTL = buffer.readUInt(4)
-            let LEN = buffer.readUInt(2)
-            let IP = "";
-            // use macros for 4.
-            if(LEN == 4)
-                IP = this.getIPv4(buffer)
-            else
-                IP = this.getIPv6(buffer)
-        
+    static AnswerDecode(buffer: DNSBuffer):DNSAnswer{
+        let answers: Answer; 
+        let Domain_Name = this.getDomainName(buffer)
+        let QTYPE = utils.getQTYPE(buffer.readUInt(2))
+        let QCLASS = utils.getQCLASS(buffer.readUInt(2))
+        let TTL = buffer.readUInt(4)
+        let LEN = buffer.readUInt(2)
+        let IP = "";
+        // use macros for 4.
+        if(LEN == 4)
+            IP = this.getIPv4(buffer)
+        else
+            IP = this.getIPv6(buffer)
+    
 
-            answers.push({Domain_Name, QTYPE, QCLASS, TTL,LEN, IP})
+        return new DNSAnswer(Domain_Name, QTYPE, QCLASS, TTL,LEN, IP)
+    }
 
-            if(!buffer.checkLength(1))
-                break;
-        }
-        return answers
+
+
+    //Getters
+    getName():string{
+        return this.name
+    }
+
+    getQTYPE():string{
+        return this.name
+    }
+
+    getQCLASS():string{
+        return this.name
+    }
+
+    getTTL():number{
+        return this.TTL
+    }
+
+    getLEN():number{
+        return this.LEN
+    }
+
+    getIP():string{
+        return this.IP
     }
 
 
@@ -55,11 +84,11 @@ export class DNSAnswer{
             let domainNameBuffer: Buffer = buffer.readBufferFrom(offset)
             let dnsBuffer = new DNSBuffer;
             dnsBuffer.replace(domainNameBuffer)
-            return Helper.getDomainName(dnsBuffer)
+            return utils.getDomainName(dnsBuffer)
             
         }
         else{
-            return Helper.getDomainName(buffer)
+            return utils.getDomainName(buffer)
         }
 
     }

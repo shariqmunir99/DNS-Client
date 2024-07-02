@@ -1,5 +1,5 @@
 import { DNSBuffer } from "./DNSBuffer";
-import { Helper } from "./Helper";
+import { utils } from "./utils";
 
 export class DNSQuestion{
 
@@ -9,24 +9,24 @@ export class DNSQuestion{
     ){}
     //Remove static after 
     static QuestionDecode(buffer: DNSBuffer){
-        let domainName = Helper.getDomainName(buffer)
-        let QTYPE = Helper.getQTYPE(buffer.readUInt(2));
-        let QCLASS  = Helper.getQCLASS(buffer.readUInt(2));
+        let domainName = utils.getDomainName(buffer)
+        let QTYPE = utils.getQTYPE(buffer.readUInt(2));
+        let QCLASS  = utils.getQCLASS(buffer.readUInt(2));
         return new DNSQuestion(domainName, QTYPE, QCLASS)
         
     }
 
     static QuestionEncode(hostname: string, qtype:string):Buffer{
-        let labelSequence = this.getLabelSequence(hostname)
-        const QTYPE = this.getQTYPE(qtype)
+        let domainName = this.parseDomainName(hostname)
+        const QTYPE = this.parseQTYPE(qtype)
         
 
         const QCLASS = Buffer.alloc(2);
         QCLASS.writeUInt16BE(0x0001, 0); // QCLASS: IN (Internet)
-        return Buffer.concat([labelSequence, QTYPE, QCLASS]);
+        return Buffer.concat([domainName, QTYPE, QCLASS]);
     }
     
-    static getLabelSequence(hostname:string):Buffer{
+    static parseDomainName(hostname:string):Buffer{
         const parts = hostname.split('.');
         const qnameBuffers = parts.map(part => {
             const length = Buffer.alloc(1);
@@ -37,12 +37,22 @@ export class DNSQuestion{
         const qname = Buffer.concat([...qnameBuffers, Buffer.from([0])]);
         return qname;
     }
-    static getQTYPE(qtype:string){
+    static parseQTYPE(qtype:string){
         const QTYPE = Buffer.alloc(2);
         if(qtype == 'ipv4')
             QTYPE.writeUInt16BE(0x0001, 0); // QTYPE: A record
         else 
             QTYPE.writeUInt16BE(0x001C, 0); // QTYPE: AAAA record
         return QTYPE
+    }
+
+
+    //getters
+    getQTYPE():string{
+        return this.qType
+    }
+
+    getDomainName():string{
+        return this.domainName
     }
 }

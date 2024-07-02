@@ -24,12 +24,25 @@ export class DNSPacket {
         dnsBuffer.replace(response)
         let header = DNSHeader.HeaderDecode(dnsBuffer)
         let question = DNSQuestion.QuestionDecode(dnsBuffer)
-        if (header.getANCOUNT() == 0)
-            return { ...header, ...question }
-        else {
-            let answers = DNSAnswer.AnswerDecode(dnsBuffer)
-            return { ...header, ...question, ...answers }
+        let answers:DNSAnswer[] = [];
+        for(let i = 0; i < header.getANCOUNT();i++){
+            answers.push(DNSAnswer.AnswerDecode(dnsBuffer))
         }
+        return new DNSPacket(header, question, answers)
+    }
+
+    //Headers
+
+    getHeader():DNSHeader{
+        return this.header
+    }
+
+    getQuestion():DNSQuestion{
+        return this.question
+    }
+
+    getAnswer():DNSAnswer[]{
+        return this.answers
     }
 
 }

@@ -47,7 +47,7 @@ import * as fs from 'fs';
     }
 
     //Handles the whole transport process. Creates the packet from hostname, the socket for connection and handles the response.
-    async Initiate():(Promise<any>){
+    async Initiate():(Promise<DNSPacket>){
         let socket = dgram.createSocket('udp4')
         try{
             let packet = this.generatePacket()
@@ -61,7 +61,7 @@ import * as fs from 'fs';
         }
         catch{
             //Throw new Error of custom TransportErrorHandler Object.
-            return Buffer.from([0x01])
+            throw new Error
         }
         finally{
             socket.close()
