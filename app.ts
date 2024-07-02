@@ -1,13 +1,9 @@
 import { TransportModule } from "./Transport";
-import { DNSHeader } from "./DNSHeader";
-import { DNSAnswer } from "./DNSAnswer";
-import { DNSBuffer } from "./DNSBuffer";
-import { DNSQuestion } from "./DNSQuestion";
 import { DNSPacket } from "./DNSPacket";
 
 const DNS_SERVER = '8.8.8.8'
 const DNS_PORT = 53
-const SUPPORTED_QTYPES = ["ipv4", "ipv6", "ns"]
+const SUPPORTED_QTYPES = ["ipv4", "ipv6", "ns", "mx"]
 
 function parseOutput(decodedPacket: DNSPacket) {
 

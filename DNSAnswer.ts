@@ -30,13 +30,19 @@ export class DNSAnswer {
         let TTL = buffer.readUInt(4)
         let LEN = buffer.readUInt(2)
         let Record = "";
+        let preference = ""
         // use macros for 4.
-        if (LEN == 4)
+        if (QTYPE == "ipv4")
             Record = this.getIPv4(buffer)
-        else if(LEN == 16)
+        else if(QTYPE == "ipv6")
             Record = this.getIPv6(buffer)
-        else
+        else if( QTYPE == "ns")
             Record = utils.getDomainName(buffer)
+        else
+        {
+            preference = buffer.readUInt(2).toString()
+            Record = preference + " " + utils.getDomainName(buffer)
+        }
 
 
         return new DNSAnswer(Domain_Name, QTYPE, QCLASS, TTL, LEN, Record)
