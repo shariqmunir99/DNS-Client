@@ -6,6 +6,7 @@
 - ipv4
 - ipv6
 - NS
+- MX
 
 
 # How to Run 
