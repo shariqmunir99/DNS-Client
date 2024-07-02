@@ -23,6 +23,7 @@ export class utils {
         if (number == 1) return "A";
         if (number == 28) return "AAAA";
         if (number == 2) return "NS"
+        if (number == 15) return "MX"
         return "Invalid QTYPE";
     }
 
