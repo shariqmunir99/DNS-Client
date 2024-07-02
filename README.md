@@ -5,6 +5,8 @@
 # Supported QTYPES
 - ipv4
 - ipv6
+- NS
+
 
 # How to Run 
 node -r @swc-node/register app.ts host_name qType
