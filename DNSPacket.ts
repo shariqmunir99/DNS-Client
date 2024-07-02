@@ -4,19 +4,21 @@ import { DNSQuestion } from "./DNSQuestion";
 import { DNSAnswer } from "./DNSAnswer";
 
 export class DNSPacket {
-    private readonly packet: Buffer
 
-    constructor(hostname: string, qtype: string) {
+    private constructor(private readonly header:DNSHeader, private readonly question:DNSQuestion, private readonly answers:DNSAnswer[] ){
+    }
+
+
+
+    static Encode(hostname: string, qtype:string)
+    {
         let header = DNSHeader.HeaderEncode()
         let question = DNSQuestion.QuestionEncode(hostname, qtype)
-        this.packet = Buffer.concat([header, question])
+        return Buffer.concat([header, question])
+        
     }
 
-    getPacket(): Buffer {
-        return this.packet
-    }
-
-    Decode(response: Buffer) {
+    static Decode(response: Buffer) {
         //Idhr anCount wala kaam krna hai. Utni loop chalo jitne answers hain aur har iteration mein DNSAnswer se bolo ke buffer se ek answer extact krde.
         let dnsBuffer = new DNSBuffer
         dnsBuffer.replace(response)

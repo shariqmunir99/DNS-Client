@@ -3,12 +3,16 @@ import { Helper } from "./Helper";
 
 export class DNSQuestion{
 
+    private constructor(private readonly domainName: string,
+        private readonly qType: string,
+        private readonly qClass: string
+    ){}
     //Remove static after 
     static QuestionDecode(buffer: DNSBuffer){
         let domainName = Helper.getDomainName(buffer)
         let QTYPE = Helper.getQTYPE(buffer.readUInt(2));
         let QCLASS  = Helper.getQCLASS(buffer.readUInt(2));
-        return {labelSequence: domainName, QTYPE, QCLASS}
+        return new DNSQuestion(domainName, QTYPE, QCLASS)
         
     }
 

@@ -41,8 +41,8 @@ import * as fs from 'fs';
         });
     };
 
-    generatePacket():DNSPacket{
-        let packetHandler = new DNSPacket(this.hostname,this.type)
+    generatePacket():Buffer{
+        let packetHandler = DNSPacket.Encode(this.hostname, this.type)
         return packetHandler
     }
 
@@ -50,17 +50,17 @@ import * as fs from 'fs';
     async Initiate():(Promise<any>){
         let socket = dgram.createSocket('udp4')
         try{
-            let packetHandler = this.generatePacket()
-            let response:Buffer =  await this.sendPacket(packetHandler.getPacket(), socket)
+            let packet = this.generatePacket()
+            let response:Buffer =  await this.sendPacket(packet, socket)
             fs.writeFile('abc.bin', response, (err) => {
                 if (err) {
                     console.error('Error writing to file', err);
                 } 
             });
-            //this.Decode(response)
-            return packetHandler.Decode(response)
+            return DNSPacket.Decode(response)
         }
         catch{
+            //Throw new Error of custom TransportErrorHandler Object.
             return Buffer.from([0x01])
         }
         finally{
