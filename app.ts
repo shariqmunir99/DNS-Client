@@ -7,7 +7,7 @@ import { DNSPacket } from "./DNSPacket";
 
 const DNS_SERVER = '8.8.8.8'
 const DNS_PORT = 53
-const SUPPORTED_QTYPES = ["ipv4", "ipv6"]
+const SUPPORTED_QTYPES = ["ipv4", "ipv6", "ns"]
 
 function parseOutput(decodedPacket: DNSPacket) {
 

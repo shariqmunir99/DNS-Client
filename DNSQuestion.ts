@@ -10,7 +10,7 @@ export class DNSQuestion {
     //Remove static after 
     static QuestionDecode(buffer: DNSBuffer) {
         let domainName = utils.getDomainName(buffer)
-        let QTYPE = utils.getQTYPE(buffer.readUInt(2));
+        let QTYPE = utils.parseQTYPE(buffer.readUInt(2));
         let QCLASS = utils.getQCLASS(buffer.readUInt(2));
         return new DNSQuestion(domainName, QTYPE, QCLASS)
 
@@ -43,8 +43,11 @@ export class DNSQuestion {
             QTYPE.writeUInt16BE(0x0001, 0); // QTYPE: A record
         else if (qtype == 'ipv6')
             QTYPE.writeUInt16BE(0x001C, 0); // QTYPE: AAAA record
-        else
-            QTYPE.writeUInt16BE(0x0002, 0); // QTYPE: ns record
+        else if (qtype == 'ns')
+            QTYPE.writeUInt16BE(0x0002, 0); // QTYPE: NS record
+        else 
+            QTYPE.writeUInt16BE(0x000F, 0); // QTYPE: MX record
+
 
         return QTYPE
     }
