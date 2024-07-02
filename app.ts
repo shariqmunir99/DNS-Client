@@ -1,29 +1,15 @@
-import { resolve } from "path";
 import { TransportModule } from "./Transport";
 import { DNSHeader } from "./DNSHeader";
 import { DNSAnswer } from "./DNSAnswer";
 import { DNSBuffer } from "./DNSBuffer";
 import { DNSQuestion } from "./DNSQuestion";
-import { decode } from "punycode";
-import { exit } from "process";
 
 const DNS_SERVER = '8.8.8.8'
 const DNS_PORT = 53
 const QTYPES  = ["ipv4", "ipv6"]
 
 function Decode(response:Buffer) {
-    let dnsBuffer = new DNSBuffer
-    dnsBuffer.replace(response)
-    let header = DNSHeader.HeaderDecode(dnsBuffer)
-    let question = DNSQuestion.QuestionDecode(dnsBuffer)
-    if (header.ANCOUNT == 0)
-        return {...header, ...question}
-    else
-        { 
-            let answers = DNSAnswer.AnswerDecode(dnsBuffer)
-            //console.log({...header, ...question, ...answers})
-            return {...header, ...question, ...answers}
-        }
+    
 }
 
 
@@ -56,8 +42,7 @@ async function start(){
     }
     const transport = new TransportModule(domain, QTYPE, DNS_SERVER, DNS_PORT)
     let response = await transport.Initiate();
-    let decodedResponse =  Decode(response)
-    parseOutput(decodedResponse)
+    parseOutput(response)
 }
 
 start()

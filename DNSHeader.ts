@@ -22,6 +22,16 @@ type Flags  =  Omit<header, 'ID'|'QDCOUNT'|'ANCOUNT'|'NSCOUNT'|'ARCOUNT'>
 
 
 export class DNSHeader{
+
+    private constructor(
+        private readonly id : number, 
+        private readonly flags : Flags,
+        private readonly QDCOUNT: number,
+        private readonly ANCOUNT: number,
+        private readonly NSCOUNT: number,
+        private readonly ARCOUNT: number,
+
+    ){}
     static HeaderEncode():Buffer{
         const id = Math.floor(Math.random() * 65535); // Random ID for the query
         const flags = 0x0120; // Standard query with recursion desired
@@ -47,7 +57,6 @@ export class DNSHeader{
 
     }
 
-
     static HeaderDecode(buffer: DNSBuffer)
     {
         let id = buffer.readUInt(2);
@@ -56,7 +65,7 @@ export class DNSHeader{
         let ANCOUNT = buffer.readUInt(2);
         let NSCOUNT = buffer.readUInt(2);
         let ARCOUNT = buffer.readUInt(2);
-        return {id, ...flagsBinary, QDCOUNT, ANCOUNT, NSCOUNT, ARCOUNT}
+        return new DNSHeader(id, flagsBinary, QDCOUNT, ANCOUNT, NSCOUNT, ARCOUNT)
 
 
     }
@@ -74,5 +83,14 @@ export class DNSHeader{
         };
         return flags
     }
+
+    getQDCOUNT(): number{
+        return this.QDCOUNT;
+    }
+
+    getANCOUNT(): number{
+        return this.ANCOUNT;
+    }
+
     
 }
