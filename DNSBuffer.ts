@@ -1,17 +1,22 @@
 import { utils } from "./utils";
 
+class outOfBoundAccess extends Error {
+    constructor(n: number) {
+        super(`Less than ${n} bytes remaining`)
+    }
+}
+
 export class DNSBuffer {
     buffer: Buffer;
     offset = 0;
-    
-    create(length:number){
+
+    create(length: number) {
         //Creates a buffer of length and sets offset to 0
         this.buffer = Buffer.alloc(length)
         this.offset = 0
     }
 
-    replace(buf: Buffer)
-    {
+    replace(buf: Buffer) {
         //Replaces the current buffer with buf and sets the offset value to 0.
         this.buffer = buf
         this.offset = 0
@@ -21,7 +26,7 @@ export class DNSBuffer {
         //Reads 2 bytes from buffer and increments offset by 2
         //Return the binaryValue of bytes as a string.
         if (!this.checkLength(length)) {
-            //This Packet is Corrupt.Do something!!!.
+            throw new outOfBoundAccess(length)
         }
         let bytesRead = this.buffer.slice(this.offset, this.offset + length)
         let hexString = bytesRead.toString('hex')
@@ -29,20 +34,17 @@ export class DNSBuffer {
         return bytesToReturn
     }
 
-    writeIntBE2(value:number){
+    writeIntBE2(value: number) {
         this.buffer.writeUInt16BE(value, this.offset)
         this.offset += 2
     }
-
-    
-
-
 
     readUInt(length: number): number {
         //Read the first byte of buffer and increments offset by 1.
         //Returns the hexValue of the byte as a string.
         if (!this.checkLength(length)) {
-            //The packet is Corrupt. Do something!!!!
+            throw new outOfBoundAccess(length)
+
         }
         let bytesRead = this.buffer.slice(this.offset, this.offset + length)
         let bytesToReturn = bytesRead.toString("hex")
@@ -51,13 +53,14 @@ export class DNSBuffer {
 
     }
 
-    readBufferFrom(offset: number): Buffer{
+    readBufferFrom(offset: number): Buffer {
         return this.buffer.slice(offset);
     }
-    
+
     readAscii(length: number, flag: boolean = false): string {
         if (!this.checkLength(length)) {
-            //The packet is Corrupt. Do something!!!!
+            throw new outOfBoundAccess(length)
+
         }
         let bytesRead = this.buffer.slice(this.offset, this.offset + length)
         let bytesToReturn = bytesRead.toString("ascii")
@@ -74,7 +77,8 @@ export class DNSBuffer {
         //Reads 2 bytes from buffer and increments offset by 2
         //Return the binaryValue of bytes as a string.
         if (!this.checkLength(length)) {
-            //This Packet is Corrupt.Do something!!!.
+            throw new outOfBoundAccess(length)
+
         }
         let bytesRead = this.buffer.slice(this.offset, this.offset + length)
         let hexString = bytesRead.toString('hex')
@@ -82,10 +86,6 @@ export class DNSBuffer {
         this.offset += 2
         return bytesToReturn
     }
-
-
-
-    
 
 
     checkLength(bytesRequested: number) {

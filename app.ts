@@ -7,25 +7,25 @@ import { DNSPacket } from "./DNSPacket";
 
 const DNS_SERVER = '8.8.8.8'
 const DNS_PORT = 53
-const QTYPES  = ["ipv4", "ipv6"]
+const SUPPORTED_QTYPES = ["ipv4", "ipv6"]
 
-function parseOutput(decodedPacket:DNSPacket){
-    
+function parseOutput(decodedPacket: DNSPacket) {
+
     let header = decodedPacket.getHeader()
     let question = decodedPacket.getQuestion()
     let answers = decodedPacket.getAnswer()
-    
+
     const id = header.getID()
-    const ansCount  = header.getANCOUNT()
+    const ansCount = header.getANCOUNT()
     console.log(`Request ID: ${id}`)
 
-    if(ansCount === 0){
+    if (ansCount === 0) {
         console.log(`Total Answers : No Answer exists for ${question.getQTYPE()} message against the Host Name:  ${question.getDomainName()}`)
         return
     }
     console.log(`Total Answers: ${ansCount}`)
     console.log("==========================================")
-    for(let i = 0;i < ansCount;i++){
+    for (let i = 0; i < ansCount; i++) {
         console.log("--------------------------------------")
         console.log(`Answer: ${i + 1}`)
         console.log(answers[i])
@@ -34,10 +34,10 @@ function parseOutput(decodedPacket:DNSPacket){
 
 
 }
-async function start(){
+async function start() {
     const domain = process.argv[2]
     const QTYPE = process.argv[3]
-    if(!QTYPES.includes(QTYPE)){
+    if (!SUPPORTED_QTYPES.includes(QTYPE)) {
         console.log("QTYPE Not Supported.")
         return
     }
