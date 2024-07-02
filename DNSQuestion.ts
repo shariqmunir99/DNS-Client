@@ -10,7 +10,7 @@ export class DNSQuestion {
     //Remove static after 
     static QuestionDecode(buffer: DNSBuffer) {
         let domainName = utils.getDomainName(buffer)
-        let QTYPE = utils.getQTYPE(buffer.readUInt(2));
+        let QTYPE = utils.parseQTYPE(buffer.readUInt(2));
         let QCLASS = utils.getQCLASS(buffer.readUInt(2));
         return new DNSQuestion(domainName, QTYPE, QCLASS)
 

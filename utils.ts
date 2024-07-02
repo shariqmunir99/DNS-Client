@@ -19,9 +19,10 @@ export class utils {
     }
 
     //Given a number, return the type of DNSQuery according to the UDP Message Protocol
-    static getQTYPE(number: Number): string {
+    static parseQTYPE(number: Number): string {
         if (number == 1) return "A";
         if (number == 28) return "AAAA";
+        if (number == 2) return "NS"
         return "Invalid QTYPE";
     }
 

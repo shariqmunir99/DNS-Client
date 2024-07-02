@@ -8,7 +8,7 @@ interface Answer {
     QCLASS: string;
     TTL: number;
     LEN: number;
-    IP: string;
+    Record: string;
 }
 
 
@@ -19,25 +19,27 @@ export class DNSAnswer {
         private readonly qClass: string,
         private readonly TTL: number,
         private readonly LEN: number,
-        private readonly IP: string,
+        private readonly Record: string,
     ) { }
 
     static AnswerDecode(buffer: DNSBuffer): DNSAnswer {
         let answers: Answer;
         let Domain_Name = utils.getDomainName(buffer)
-        let QTYPE = utils.getQTYPE(buffer.readUInt(2))
+        let QTYPE = utils.parseQTYPE(buffer.readUInt(2))
         let QCLASS = utils.getQCLASS(buffer.readUInt(2))
         let TTL = buffer.readUInt(4)
         let LEN = buffer.readUInt(2)
-        let IP = "";
+        let Record = "";
         // use macros for 4.
         if (LEN == 4)
-            IP = this.getIPv4(buffer)
+            Record = this.getIPv4(buffer)
+        else if(LEN == 16)
+            Record = this.getIPv6(buffer)
         else
-            IP = this.getIPv6(buffer)
+            Record = utils.getDomainName(buffer)
 
 
-        return new DNSAnswer(Domain_Name, QTYPE, QCLASS, TTL, LEN, IP)
+        return new DNSAnswer(Domain_Name, QTYPE, QCLASS, TTL, LEN, Record)
     }
 
 
@@ -63,35 +65,11 @@ export class DNSAnswer {
         return this.LEN
     }
 
-    getIP(): string {
-        return this.IP
+    getRecord(): string {
+        return this.Record
     }
 
 
-    //static getDomainName(buffer: DNSBuffer): string{
-    //    let offsetCheck = buffer.peek(1)
-    //    let isOffset = false
-    //    if (offsetCheck.slice(0, 2) === "11"){
-    //        isOffset = true;
-    //    }
-    //    else {
-    //        isOffset = false
-    //    }
-    //
-    //    if(isOffset){
-    //        //Extracting the last 14 bits and converting them to base 10 to get offset value.
-    //        let offset = parseInt(buffer.readBinaryByte(2).slice(2), 2)
-    //        let domainNameBuffer: Buffer = buffer.readBufferFrom(offset)
-    //        let dnsBuffer = new DNSBuffer;
-    //        dnsBuffer.replace(domainNameBuffer)
-    //        return utils.getDomainName(dnsBuffer)
-    //        
-    //    }
-    //    else{
-    //        return utils.getDomainName(buffer)
-    //    }
-    //
-    //}
 
     static getIPv4(buffer: DNSBuffer): string {
         let ip = buffer.readUInt(1) + "." + buffer.readUInt(1) + "." + buffer.readUInt(1) + "." + buffer.readUInt(1)
